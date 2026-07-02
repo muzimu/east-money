@@ -61,8 +61,8 @@ var buyCmd = &cobra.Command{
 		}
 
 		view := &client.OrderResultView{
-			OrderDate: resp.Wtrq,
-			OrderID:   resp.Wtbh,
+			OrderDate: resp.OrderDate,
+			OrderID:   resp.OrderID,
 		}
 		printOutput(client.WrapResponse(resp.Status, resp.Message, resp.Errcode, view))
 		return nil
@@ -100,8 +100,8 @@ var sellCmd = &cobra.Command{
 		}
 
 		view := &client.OrderResultView{
-			OrderDate: resp.Wtrq,
-			OrderID:   resp.Wtbh,
+			OrderDate: resp.OrderDate,
+			OrderID:   resp.OrderID,
 		}
 		printOutput(client.WrapResponse(resp.Status, resp.Message, resp.Errcode, view))
 		return nil

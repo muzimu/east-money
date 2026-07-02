@@ -138,7 +138,7 @@ func printStruct(w io.Writer, v reflect.Value) {
 	}
 }
 
-// printTable 将结构体切片打印为表格。
+// printTable 将结构体切片打印为对齐表格（支持 CJK 字符宽度）。
 func printTable(w io.Writer, v reflect.Value) {
 	if v.Len() == 0 {
 		fmt.Fprintln(w, "(empty)")
@@ -159,25 +159,28 @@ func printTable(w io.Writer, v reflect.Value) {
 	}
 
 	t := first.Type()
-	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
-	// 表头
-	headers := make([]string, 0, t.NumField())
+	// 收集列信息
 	cols := make([]int, 0, t.NumField())
 	for i := 0; i < t.NumField(); i++ {
 		name := jsonTagName(t.Field(i))
 		if name == "-" {
 			continue
 		}
-		headers = append(headers, name)
 		cols = append(cols, i)
 	}
-	if len(headers) == 0 {
+	if len(cols) == 0 {
 		return
 	}
-	fmt.Fprintln(tw, strings.Join(headers, "\t"))
 
-	// 数据行
+	// 构建所有行（表头 + 数据）
+	rows := make([][]string, 0, v.Len()+1)
+	headers := make([]string, len(cols))
+	for j, col := range cols {
+		headers[j] = jsonTagName(t.Field(col))
+	}
+	rows = append(rows, headers)
+
 	for i := 0; i < v.Len(); i++ {
 		item := v.Index(i)
 		if item.Kind() == reflect.Ptr {
@@ -190,9 +193,29 @@ func printTable(w io.Writer, v reflect.Value) {
 		for j, col := range cols {
 			row[j] = formatFieldValue(item.Field(col))
 		}
-		fmt.Fprintln(tw, strings.Join(row, "\t"))
+		rows = append(rows, row)
 	}
-	tw.Flush()
+
+	// 计算每列最大视觉宽度（CJK = 2, ASCII = 1）
+	colWidths := make([]int, len(cols))
+	for _, row := range rows {
+		for j, val := range row {
+			if w := visualWidth(val); w > colWidths[j] {
+				colWidths[j] = w
+			}
+		}
+	}
+
+	// 输出对齐表格
+	for _, row := range rows {
+		for j, val := range row {
+			if j > 0 {
+				fmt.Fprint(w, "  ")
+			}
+			fmt.Fprint(w, padVisual(val, colWidths[j]))
+		}
+		fmt.Fprintln(w)
+	}
 }
 
 // jsonTagName 从 struct field 的 json tag 中提取字段名。
@@ -220,6 +243,28 @@ func formatFieldValue(field reflect.Value) string {
 	default:
 		return fmt.Sprintf("%v", field.Interface())
 	}
+}
+
+// visualWidth 计算字符串的终端显示宽度（CJK 字符计为 2，ASCII 计为 1）。
+func visualWidth(s string) int {
+	w := 0
+	for _, r := range s {
+		if r > 0x7F {
+			w += 2
+		} else {
+			w += 1
+		}
+	}
+	return w
+}
+
+// padVisual 将字符串填充到指定的终端显示宽度。
+func padVisual(s string, targetWidth int) string {
+	current := visualWidth(s)
+	if current >= targetWidth {
+		return s
+	}
+	return s + strings.Repeat(" ", targetWidth-current)
 }
 
 // isStructSlice 判断是否为结构体切片（可展开为嵌套表格）。

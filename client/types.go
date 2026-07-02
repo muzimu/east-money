@@ -65,7 +65,6 @@ type Position struct {
 	StockCode    string `json:"Zqdm"`   // 证券代码
 	StockName    string `json:"Zqmc"`   // 证券名称
 	FullName     string `json:"zqzwqc"` // 证券全称
-	Market       string `json:"Market"` // 市场（SA/HA）
 	HoldAmount   string `json:"Zqsl"`   // 持仓数量
 	AvailAmount  string `json:"Kysl"`   // 可用数量
 	CostPrice    string `json:"Cbjg"`   // 成本价格
@@ -84,16 +83,15 @@ type OrdersResponse struct {
 
 // OrderRecord 订单记录。
 type OrderRecord struct {
-	Wtrq       string `json:"Wtrq"` // 委托日期
-	Wtbh       string `json:"Wtbh"` // 委托编号
-	StockCode  string `json:"Zqdm"` // 证券代码
-	StockName  string `json:"Zqmc"` // 证券名称
-	TradeType  string `json:"Mmsm"` // 买卖说明
-	Price      string `json:"Wtjg"` // 委托价格
-	Amount     string `json:"Wtsl"` // 委托数量
-	DealAmount string `json:"Cjsl"` // 成交数量
-	Status     string `json:"Wtzt"` // 委托状态
-	Market     string `json:"Sclx"` // 市场类型
+	OrderDate   string `json:"Wtrq"` // 委托日期
+	OrderID     string `json:"Wtbh"` // 委托编号
+	StockCode   string `json:"Zqdm"` // 证券代码
+	StockName   string `json:"Zqmc"` // 证券名称
+	TradeDesc   string `json:"Mmsm"` // 买卖说明
+	OrderPrice  string `json:"Wtjg"` // 委托价格
+	OrderAmount string `json:"Wtsl"` // 委托数量
+	DealAmount  string `json:"Cjsl"` // 成交数量
+	OrderStatus string `json:"Wtzt"` // 委托状态
 }
 
 // TradesResponse 成交查询响应。
@@ -104,14 +102,13 @@ type TradesResponse struct {
 
 // TradeRecord 成交记录。
 type TradeRecord struct {
-	Cjrq      string `json:"Cjrq"` // 成交日期
-	Cjbh      string `json:"Cjbh"` // 成交编号
-	StockCode string `json:"Zqdm"` // 证券代码
-	StockName string `json:"Zqmc"` // 证券名称
-	TradeType string `json:"Mmsm"` // 买卖说明
-	Price     string `json:"Cjjg"` // 成交价格
-	Amount    string `json:"Cjsl"` // 成交数量
-	Market    string `json:"Sclx"` // 市场类型
+	TradeDate  string `json:"Cjrq"` // 成交日期
+	TradeID    string `json:"Cjbh"` // 成交编号
+	StockCode  string `json:"Zqdm"` // 证券代码
+	StockName  string `json:"Zqmc"` // 证券名称
+	TradeDesc  string `json:"Mmsm"` // 买卖说明
+	TradePrice string `json:"Cjjg"` // 成交价格
+	TradeAmt   string `json:"Cjsl"` // 成交数量
 }
 
 // FundsFlowResponse 资金流水查询响应。
@@ -131,8 +128,8 @@ type FundsFlowRecord struct {
 // CreateOrderResponse 下单响应。
 type CreateOrderResponse struct {
 	BaseResponse
-	Wtrq string `json:"Wtrq"` // 委托日期
-	Wtbh string `json:"Wtbh"` // 委托编号
+	OrderDate string `json:"Wtrq"` // 委托日期
+	OrderID   string `json:"Wtbh"` // 委托编号
 }
 
 // SnapshotResponse 行情快照响应。

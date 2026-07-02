@@ -31,7 +31,7 @@ func (c *Client) CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, err
 		return nil, fmt.Errorf("解析下单响应失败: %w", err)
 	}
 
-	c.logger.Infof("下单结果: Status=%d, Wtrq=%s, Wtbh=%s", resp.Status, resp.Wtrq, resp.Wtbh)
+	c.logger.Infof("下单结果: Status=%d, Wtrq=%s, Wtbh=%s", resp.Status, resp.OrderDate, resp.OrderID)
 	return &resp, nil
 }
 

@@ -21,12 +21,11 @@ type PositionView struct {
 	StockCode    string `json:"证券代码"` // 证券代码
 	StockName    string `json:"证券名称"` // 证券名称
 	FullName     string `json:"证券全称"` // 证券全称
-	Market       string `json:"市场"`   // 市场（深圳/上海）
 	HoldAmount   string `json:"持仓数量"` // 持仓数量
 	AvailAmount  string `json:"可用数量"` // 可用数量
 	CostPrice    string `json:"成本价格"` // 成本价格
 	CurrentPrice string `json:"最新价格"` // 最新价格
-	MktValue     string `json:"证券市值"` // 证券市值
+	MarketValue  string `json:"证券市值"` // 证券市值
 	ProfitLoss   string `json:"累计盈亏"` // 累计盈亏
 	TodayPL      string `json:"当日盈亏"` // 当日盈亏
 	PLRatio      string `json:"盈亏比例"` // 盈亏比例
@@ -43,7 +42,6 @@ type OrderView struct {
 	OrderAmount string `json:"委托数量"` // 委托数量
 	DealAmount  string `json:"成交数量"` // 成交数量
 	OrderStatus string `json:"委托状态"` // 委托状态
-	MarketType  string `json:"市场类型"` // 市场类型
 }
 
 // TradeView 成交记录（中文输出）。
@@ -55,7 +53,6 @@ type TradeView struct {
 	TradeDesc  string `json:"买卖说明"` // 买卖说明
 	TradePrice string `json:"成交价格"` // 成交价格
 	TradeAmt   string `json:"成交数量"` // 成交数量
-	MarketType string `json:"市场类型"` // 市场类型
 }
 
 // FundsFlowView 资金流水记录（中文输出）。
@@ -76,7 +73,7 @@ type OrderResultView struct {
 // 转换函数：API 结构体 → 中文展示结构体
 // =============================================================================
 
-// ConvertSlice 泛型批量转换，消除重复的批量 ToView 函数。
+// ConvertSlice 泛型批量转换。
 func ConvertSlice[S any, V any](items []S, conv func(S) V) []V {
 	views := make([]V, len(items))
 	for i, item := range items {
@@ -104,71 +101,31 @@ func (a *AccountSummary) ToView() *AccountView {
 }
 
 // ToView 将 Position 转为中文展示。
-func (p Position) ToView() PositionView {
-	return PositionView{
-		StockCode:    p.StockCode,
-		StockName:    p.StockName,
-		FullName:     p.FullName,
-		Market:       marketName(p.Market),
-		HoldAmount:   p.HoldAmount,
-		AvailAmount:  p.AvailAmount,
-		CostPrice:    p.CostPrice,
-		CurrentPrice: p.CurrentPrice,
-		MktValue:     p.MarketValue,
-		ProfitLoss:   p.ProfitLoss,
-		TodayPL:      p.TodayPL,
-		PLRatio:      p.PLRatio,
-	}
-}
+func (p Position) ToView() PositionView { return PositionView(p) }
 
 // ToView 将 OrderRecord 转为中文展示。
 func (o *OrderRecord) ToView() *OrderView {
-	return &OrderView{
-		OrderDate:   o.Wtrq,
-		OrderID:     o.Wtbh,
-		StockCode:   o.StockCode,
-		StockName:   o.StockName,
-		TradeDesc:   o.TradeType,
-		OrderPrice:  o.Price,
-		OrderAmount: o.Amount,
-		DealAmount:  o.DealAmount,
-		OrderStatus: o.Status,
-		MarketType:  marketName(o.Market),
+	if o == nil {
+		return nil
 	}
+	v := OrderView(*o)
+	return &v
 }
 
 // ToView 将 TradeRecord 转为中文展示。
 func (t *TradeRecord) ToView() *TradeView {
-	return &TradeView{
-		TradeDate:  t.Cjrq,
-		TradeID:    t.Cjbh,
-		StockCode:  t.StockCode,
-		StockName:  t.StockName,
-		TradeDesc:  t.TradeType,
-		TradePrice: t.Price,
-		TradeAmt:   t.Amount,
-		MarketType: marketName(t.Market),
+	if t == nil {
+		return nil
 	}
+	v := TradeView(*t)
+	return &v
 }
 
 // ToView 将 FundsFlowRecord 转为中文展示。
 func (f *FundsFlowRecord) ToView() *FundsFlowView {
-	return &FundsFlowView{
-		Date:    f.Date,
-		Amount:  f.Amount,
-		Balance: f.Balance,
-		Remark:  f.Remark,
+	if f == nil {
+		return nil
 	}
-}
-
-// marketName 将市场代码转为中文描述。
-func marketName(market string) string {
-	switch market {
-	case "HA":
-		return "上海"
-	case "SA":
-		return "深圳"
-	default:
-		return market
-	}
+	v := FundsFlowView(*f)
+	return &v
 }
