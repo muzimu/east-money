@@ -99,16 +99,17 @@ func tryUnwrapResponse(v reflect.Value) (any, bool) {
 }
 
 // printStruct 将单个结构体打印为 key-value 格式。
-// 结构体切片字段自动展开为嵌套表格。
+// 结构体切片字段自动展开为嵌套表格，结构体指针字段递归展开。
 func printStruct(w io.Writer, v reflect.Value) {
 	t := v.Type()
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
 
-	type nestedSlice struct {
-		name string
-		v    reflect.Value
+	type nestedBlock struct {
+		name    string
+		v       reflect.Value
+		isSlice bool
 	}
-	var nested []nestedSlice
+	var nested []nestedBlock
 
 	for i := 0; i < t.NumField(); i++ {
 		field := v.Field(i)
@@ -122,7 +123,13 @@ func printStruct(w io.Writer, v reflect.Value) {
 
 		// 结构体切片 → 收集后展开为嵌套表格
 		if isStructSlice(field) {
-			nested = append(nested, nestedSlice{name, field})
+			nested = append(nested, nestedBlock{name, field, true})
+			continue
+		}
+
+		// 结构体指针 → 收集后递归展开
+		if isStructPtr(field) {
+			nested = append(nested, nestedBlock{name, field.Elem(), false})
 			continue
 		}
 
@@ -131,11 +138,20 @@ func printStruct(w io.Writer, v reflect.Value) {
 	}
 	tw.Flush()
 
-	// 嵌套切片在标量字段之后展开
-	for _, ns := range nested {
-		fmt.Fprintf(w, "\n%s:\n", ns.name)
-		printTable(w, ns.v)
+	// 嵌套块在标量字段之后展开
+	for _, nb := range nested {
+		fmt.Fprintf(w, "\n%s:\n", nb.name)
+		if nb.isSlice {
+			printTable(w, nb.v)
+		} else {
+			printStruct(w, nb.v)
+		}
 	}
+}
+
+// isStructPtr 判断是否为非 nil 的结构体指针。
+func isStructPtr(v reflect.Value) bool {
+	return v.Kind() == reflect.Ptr && !v.IsNil() && v.Elem().Kind() == reflect.Struct
 }
 
 // printTable 将结构体切片打印为对齐表格（支持 CJK 字符宽度）。

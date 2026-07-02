@@ -242,22 +242,23 @@ var cancelCmd = &cobra.Command{
 
 var priceCmd = &cobra.Command{
 	Use:   "price CODE [MARKET]",
-	Short: "查询股票最新价格",
-	Long: `查询股票最新价格。市场默认根据代码自动判断。
+	Short: "查询股票实时行情",
+	Long: `查询股票实时行情，包含最新价、涨跌幅、五档买卖盘等完整信息。
 
 示例:
   eastmoney price 000001        # 平安银行（自动识别深圳）
-  eastmoney price 600519 HA     # 贵州茅台（手动指定上海）`,
+  eastmoney price 600519 HA     # 贵州茅台（手动指定上海）
+  eastmoney price 600397 --format json  # JSON 格式输出`,
 	Args: cobra.RangeArgs(1, 2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		code := args[0]
 
-		price, err := client.GetLastPrice(code)
+		snap, err := client.GetSnapshot(code)
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("%s: %.2f\n", code, price)
+		printOutput(snap.ToView())
 		return nil
 	},
 }

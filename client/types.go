@@ -134,13 +134,73 @@ type CreateOrderResponse struct {
 
 // SnapshotResponse 行情快照响应。
 type SnapshotResponse struct {
+	Code          string         `json:"code"`
+	Name          string         `json:"name"`
+	SName         string         `json:"sname"`
+	Flag          int            `json:"flag"`
+	TransMarket   int            `json:"transMarket"`
+	TransType     int            `json:"transType"`
+	UpperLimit    string         `json:"topprice"`
+	LowerLimit    string         `json:"bottomprice"`
+	NT            string         `json:"nt"`
+	NB            string         `json:"nb"`
 	Status        int            `json:"status"`
-	Realtimequote *RealtimeQuote `json:"realtimequote"`
+	TradePeriod   int            `json:"tradeperiod"`
+	FiveQuote     *FiveQuote     `json:"fivequote"`
+	RealtimeQuote *RealtimeQuote `json:"realtimequote"`
+	PriceLimit    *PriceLimit    `json:"pricelimit"`
+}
+
+// FiveQuote 五档买卖报价。
+type FiveQuote struct {
+	PrevClose      string `json:"yesClosePrice"`
+	YesSettlePrice string `json:"yesSettlePrice"`
+	OpenPrice      string `json:"openPrice"`
+	Sale1          string `json:"sale1"`
+	Sale2          string `json:"sale2"`
+	Sale3          string `json:"sale3"`
+	Sale4          string `json:"sale4"`
+	Sale5          string `json:"sale5"`
+	Buy1           string `json:"buy1"`
+	Buy2           string `json:"buy2"`
+	Buy3           string `json:"buy3"`
+	Buy4           string `json:"buy4"`
+	Buy5           string `json:"buy5"`
+	Sale1Count     int    `json:"sale1_count"`
+	Sale2Count     int    `json:"sale2_count"`
+	Sale3Count     int    `json:"sale3_count"`
+	Sale4Count     int    `json:"sale4_count"`
+	Sale5Count     int    `json:"sale5_count"`
+	Buy1Count      int    `json:"buy1_count"`
+	Buy2Count      int    `json:"buy2_count"`
+	Buy3Count      int    `json:"buy3_count"`
+	Buy4Count      int    `json:"buy4_count"`
+	Buy5Count      int    `json:"buy5_count"`
 }
 
 // RealtimeQuote 实时行情数据。
 type RealtimeQuote struct {
+	Open         string `json:"open"`
+	High         string `json:"high"`
+	Low          string `json:"low"`
+	Avg          string `json:"avg"`
+	ChangeAmount string `json:"zd"`
+	ChangeRatio  string `json:"zdf"`
+	Turnover     string `json:"turnover"`
 	CurrentPrice string `json:"currentPrice"`
+	SettlePrice  string `json:"settlePrice"`
+	Volume       string `json:"volume"`
+	Amount       string `json:"amount"`
+	WP           string `json:"wp"`
+	NP           string `json:"np"`
+	Time         string `json:"time"`
+	Date         string `json:"date"`
+}
+
+// PriceLimit 涨跌停价格。
+type PriceLimit struct {
+	Upper string `json:"upper"`
+	Lower string `json:"lower"`
 }
 
 // LoginResponse 登录响应。
