@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/muzimu/east-money/client"
 	"github.com/spf13/cobra"
@@ -196,6 +197,10 @@ var queryCmd = &cobra.Command{
 			return fmt.Errorf("未知查询类型: %s (可选: asset, order, trade, history-order, history-trade, funds)", args[0])
 		}
 
+		if err := validateDateRange(args[0]); err != nil {
+			return err
+		}
+
 		c, err := createClient(false)
 		if err != nil {
 			return err
@@ -255,4 +260,23 @@ var priceCmd = &cobra.Command{
 		fmt.Printf("%s: %.2f\n", code, price)
 		return nil
 	},
+}
+
+// validateDateRange 校验历史查询子命令的日期范围参数。
+// history-order / history-trade / funds 需要 --start 和 --end，
+// 缺少任一参数时直接报错，不发起无效请求。
+func validateDateRange(subcmd string) error {
+	switch subcmd {
+	case "history-order", "history-trade", "funds":
+		if flagStartDate == "" || flagEndDate == "" {
+			return fmt.Errorf("%s 需要指定日期范围: --start 和 --end (格式: 2006-01-02)", subcmd)
+		}
+		if _, err := time.Parse("2006-01-02", flagStartDate); err != nil {
+			return fmt.Errorf("无效的起始日期: %s (期望格式: 2006-01-02)", flagStartDate)
+		}
+		if _, err := time.Parse("2006-01-02", flagEndDate); err != nil {
+			return fmt.Errorf("无效的结束日期: %s (期望格式: 2006-01-02)", flagEndDate)
+		}
+	}
+	return nil
 }

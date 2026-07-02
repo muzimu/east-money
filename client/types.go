@@ -122,10 +122,10 @@ type FundsFlowResponse struct {
 
 // FundsFlowRecord 资金流水记录。
 type FundsFlowRecord struct {
-	Date    string `json:"Rq"`   // 日期
-	Amount  string `json:"Szje"` // 发生金额
-	Balance string `json:"Ye"`   // 余额
-	Remark  string `json:"Bz"`   // 备注
+	Date    string `json:"Fsrq"` // 发生日期
+	Amount  string `json:"Fsje"` // 发生金额
+	Balance string `json:"Zjye"` // 资金余额
+	Remark  string `json:"Ywsm"` // 业务说明
 }
 
 // CreateOrderResponse 下单响应。
