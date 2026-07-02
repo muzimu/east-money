@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/jpeg" // JPEG 解码器
@@ -21,6 +22,12 @@ import (
 	eastmoney "github.com/muzimu/east-money"
 )
 
+// errCaptchaWrong 验证码错误哨兵错误，用于 doLogin 重试判断。
+var (
+	errCaptchaWrong  = errors.New("验证码错误")
+	errPasswordWrong = errors.New("密码错误")
+)
+
 // createLoginFunc 创建登录回调闭包。
 // 将 loginFunc 注入 credential.DefaultSession，实现依赖反转。
 func (c *Client) createLoginFunc() func() (string, error) {
@@ -29,28 +36,49 @@ func (c *Client) createLoginFunc() func() (string, error) {
 	}
 }
 
-// doLogin 执行完整的登录流程：
+// doLogin 执行完整的登录流程（含验证码错误自动重试）：
 //  1. 获取验证码图片并 OCR
 //  2. RSA 加密密码
 //  3. POST 登录表单
 //  4. GET Trade/Buy 页面提取 em_validatekey
+//
+// 服务端返回验证码错误（ReturnCode==-1）时自动重新获取验证码重试，
+// 最多重试 MaxCaptchaRetry 次。
 func (c *Client) doLogin() (string, error) {
-	c.logger.Debug("开始登录...")
-
-	// 1. 获取验证码
-	randNum, captchaCode, err := c.getCaptcha()
-	if err != nil {
-		return "", fmt.Errorf("获取验证码失败: %w", err)
-	}
-	c.logger.Debugf("验证码: %s (rand=%s)", captchaCode, randNum)
-
-	// 2. RSA 加密密码
+	// RSA 加密密码——整个登录流程中仅需执行一次
 	encryptedPass, err := rsaEncryptPassword(c.password)
 	if err != nil {
 		return "", fmt.Errorf("密码加密失败: %w", err)
 	}
 
-	// 3. 构造并发送登录请求
+	c.logger.Debug("开始登录...")
+
+	for attempt := 0; attempt < eastmoney.MaxCaptchaRetry; attempt++ {
+		randNum, captchaCode, err := c.getCaptcha()
+		if err != nil {
+			return "", fmt.Errorf("获取验证码失败: %w", err)
+		}
+		c.logger.Debugf("验证码: %s (rand=%s)", captchaCode, randNum)
+
+		validateKey, err := c.submitLogin(randNum, captchaCode, encryptedPass)
+		if errors.Is(err, errCaptchaWrong) {
+			c.logger.Debugf("服务端验证码校验失败，重新获取验证码重试...")
+			continue
+		}
+		if err != nil {
+			return "", err
+		}
+
+		c.logger.Infof("登录成功, validateKey=%s", validateKey)
+		return validateKey, nil
+	}
+
+	return "", fmt.Errorf("验证码错误，已重试 %d 次", eastmoney.MaxCaptchaRetry)
+}
+
+// submitLogin 提交登录表单到服务端并提取 validateKey。
+// 返回 errCaptchaWrong 表示服务端判定验证码错误，调用方可重试。
+func (c *Client) submitLogin(randNum, captchaCode, encryptedPass string) (string, error) {
 	loginURL := eastmoney.BaseURL + eastmoney.LoginPath
 	form := url.Values{
 		"userId":       {c.username},
@@ -75,24 +103,26 @@ func (c *Client) doLogin() (string, error) {
 		return "", fmt.Errorf("登录返回 HTTP %d: %s", resp.StatusCode, string(body))
 	}
 
-	// 检查登录响应
 	var loginResp LoginResponse
 	if err := json.Unmarshal(body, &loginResp); err == nil {
-		c.logger.Infof("登录响应: Status=%s, Message=%s", loginResp.Status, loginResp.Message)
+		c.logger.Info("登录响应: ", loginResp)
 		if !loginResp.IsSuccess() {
-			return "", fmt.Errorf("登录失败: %s", loginResp.Message)
+			if loginResp.ErrCode == -980023096 {
+				return "", errPasswordWrong
+			}
+			if loginResp.ReturnCode == -1 {
+				return "", errCaptchaWrong // 可重试
+			}
 		}
 	} else {
 		c.logger.Debugf("登录响应（非JSON）: %s", string(body))
 	}
 
-	// 提取 validateKey
 	validateKey, err := c.extractValidateKey()
 	if err != nil {
 		return "", fmt.Errorf("登录失败: %w", err)
 	}
 
-	c.logger.Infof("登录成功, validateKey=%s", validateKey)
 	return validateKey, nil
 }
 

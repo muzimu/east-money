@@ -50,13 +50,13 @@ type AssetPositionResponse struct {
 
 // AccountSummary 账户总览（资金 + 持仓列表）。
 type AccountSummary struct {
-	TotalAsset  string     `json:"Zzc"`      // 总资产
-	MarketValue string     `json:"Zxsz"`     // 证券市值
-	Available   string     `json:"Kyzj"`     // 可用资金
-	Balance     string     `json:"Zjye"`     // 资金余额
-	Frozen      string     `json:"Djzj"`     // 冻结资金
-	TotalPL     string     `json:"Ljyk"`     // 累计盈亏
-	TodayPL     string     `json:"Dryk"`     // 当日盈亏
+	TotalAsset  string     `json:"Zzc"`       // 总资产
+	MarketValue string     `json:"Zxsz"`      // 证券市值
+	Available   string     `json:"Kyzj"`      // 可用资金
+	Balance     string     `json:"Zjye"`      // 资金余额
+	Frozen      string     `json:"Djzj"`      // 冻结资金
+	TotalPL     string     `json:"Ljyk"`      // 累计盈亏
+	TodayPL     string     `json:"Dryk"`      // 当日盈亏
 	Positions   []Position `json:"positions"` // 持仓明细
 }
 
@@ -84,16 +84,16 @@ type OrdersResponse struct {
 
 // OrderRecord 订单记录。
 type OrderRecord struct {
-	Wtrq      string `json:"Wtrq"`      // 委托日期
-	Wtbh      string `json:"Wtbh"`      // 委托编号
-	StockCode string `json:"Zqdm"`      // 证券代码
-	StockName string `json:"Zqmc"`      // 证券名称
-	TradeType string `json:"Mmsm"`      // 买卖说明
-	Price     string `json:"Wtjg"`      // 委托价格
-	Amount    string `json:"Wtsl"`      // 委托数量
-	DealAmount string `json:"Cjsl"`     // 成交数量
-	Status    string `json:"Wtzt"`      // 委托状态
-	Market    string `json:"Sclx"`      // 市场类型
+	Wtrq       string `json:"Wtrq"` // 委托日期
+	Wtbh       string `json:"Wtbh"` // 委托编号
+	StockCode  string `json:"Zqdm"` // 证券代码
+	StockName  string `json:"Zqmc"` // 证券名称
+	TradeType  string `json:"Mmsm"` // 买卖说明
+	Price      string `json:"Wtjg"` // 委托价格
+	Amount     string `json:"Wtsl"` // 委托数量
+	DealAmount string `json:"Cjsl"` // 成交数量
+	Status     string `json:"Wtzt"` // 委托状态
+	Market     string `json:"Sclx"` // 市场类型
 }
 
 // TradesResponse 成交查询响应。
@@ -104,14 +104,14 @@ type TradesResponse struct {
 
 // TradeRecord 成交记录。
 type TradeRecord struct {
-	Cjrq      string `json:"Cjrq"`      // 成交日期
-	Cjbh      string `json:"Cjbh"`      // 成交编号
-	StockCode string `json:"Zqdm"`      // 证券代码
-	StockName string `json:"Zqmc"`      // 证券名称
-	TradeType string `json:"Mmsm"`      // 买卖说明
-	Price     string `json:"Cjjg"`      // 成交价格
-	Amount    string `json:"Cjsl"`      // 成交数量
-	Market    string `json:"Sclx"`      // 市场类型
+	Cjrq      string `json:"Cjrq"` // 成交日期
+	Cjbh      string `json:"Cjbh"` // 成交编号
+	StockCode string `json:"Zqdm"` // 证券代码
+	StockName string `json:"Zqmc"` // 证券名称
+	TradeType string `json:"Mmsm"` // 买卖说明
+	Price     string `json:"Cjjg"` // 成交价格
+	Amount    string `json:"Cjsl"` // 成交数量
+	Market    string `json:"Sclx"` // 市场类型
 }
 
 // FundsFlowResponse 资金流水查询响应。
@@ -122,10 +122,10 @@ type FundsFlowResponse struct {
 
 // FundsFlowRecord 资金流水记录。
 type FundsFlowRecord struct {
-	Date   string `json:"Rq"`    // 日期
-	Amount string `json:"Szje"`  // 发生金额
+	Date    string `json:"Rq"`   // 日期
+	Amount  string `json:"Szje"` // 发生金额
 	Balance string `json:"Ye"`   // 余额
-	Remark string `json:"Bz"`    // 备注
+	Remark  string `json:"Bz"`   // 备注
 }
 
 // CreateOrderResponse 下单响应。
@@ -137,8 +137,8 @@ type CreateOrderResponse struct {
 
 // SnapshotResponse 行情快照响应。
 type SnapshotResponse struct {
-	Status        int              `json:"status"`
-	Realtimequote *RealtimeQuote   `json:"realtimequote"`
+	Status        int            `json:"status"`
+	Realtimequote *RealtimeQuote `json:"realtimequote"`
 }
 
 // RealtimeQuote 实时行情数据。
@@ -149,8 +149,10 @@ type RealtimeQuote struct {
 // LoginResponse 登录响应。
 // Status 字段服务端不一致：成功返回 int 0，失败返回 string "-1"。
 type LoginResponse struct {
-	Status  json.RawMessage `json:"Status"`
-	Message string          `json:"Message"`
+	Status     json.RawMessage `json:"Status"`
+	ErrCode    int             `json:"Errcode"`
+	Message    string          `json:"Message"`
+	ReturnCode int             `json:"Return_Code"`
 }
 
 // IsSuccess 判断登录是否成功（Status 为 0 或 "0"）。
