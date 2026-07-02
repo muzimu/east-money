@@ -1,0 +1,24 @@
+# East Money CLI 配置文件
+# 放置于项目根目录下 ./config.yaml
+# 优先级: CLI 参数 > 环境变量 > 配置文件 > 默认值
+
+# 账户凭据（也可用 EM_USERNAME / EM_PASSWORD 环境变量）
+user: ""
+password: ""
+
+# 日志文件路径
+log: ".eastmoney/eastmoney.log"
+
+# OCR 配置
+ocr:
+  # ddddocr 模型文件路径
+  model: "./go-ocr-model/ddddocr/common.onnx"
+  # 字符集文件路径
+  dict: "./go-ocr-model/ddddocr/dict.txt"
+  # ONNX Runtime 库路径（留空自动检测平台）
+  # macOS ARM64: ./go-ocr-model/lib/onnxruntime_arm64.dylib
+  # macOS AMD64: ./go-ocr-model/lib/onnxruntime_amd64.dylib
+  # Linux ARM64:  ./go-ocr-model/lib/onnxruntime_arm64.so
+  # Linux AMD64:  ./go-ocr-model/lib/onnxruntime_amd64.so
+  # Windows:      ./go-ocr-model/lib/onnxruntime.dll
+  onnx_lib: ""
