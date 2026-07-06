@@ -5,6 +5,7 @@ project_name: eastmoney
 before:
   hooks:
     - go mod tidy
+    - bash scripts/prepare-assets.sh
 
 builds:
   - id: eastmoney
@@ -41,6 +42,12 @@ archives:
       - goos: windows
         formats:
           - zip
+    files:
+      - config.example.yaml
+      - src: go-ocr-model/ddddocr/*
+        dst: go-ocr-model/ddddocr/
+      - src: go-ocr-model/lib/{{ .Os }}/{{ .Arch }}/*
+        dst: go-ocr-model/lib/
 
 checksum:
   name_template: "checksums.txt"
