@@ -40,6 +40,11 @@ var (
 			Dict:  "./go-ocr/ddddocr_weights/dict.txt",
 		},
 	}
+
+	// 版本信息由 GoReleaser 或 Makefile 通过 -ldflags 注入。
+	version = "dev"
+	commit  = "unknown"
+	date    = "unknown"
 )
 
 func main() {
@@ -96,4 +101,5 @@ func init() {
 	rootCmd.AddCommand(queryCmd)
 	rootCmd.AddCommand(cancelCmd)
 	rootCmd.AddCommand(priceCmd)
+	rootCmd.AddCommand(versionCmd)
 }

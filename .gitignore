@@ -1,3 +1,4 @@
 /eastmoney
 config.yaml
 .eastmoney
+dist/
