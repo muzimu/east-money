@@ -66,6 +66,8 @@ func fprintHuman(w io.Writer, data any) {
 		printTable(w, v)
 	case reflect.Struct:
 		printStruct(w, v)
+	case reflect.Map:
+		printMap(w, v)
 	default:
 		fmt.Fprintf(w, "%v\n", data)
 	}
@@ -96,6 +98,22 @@ func tryUnwrapResponse(v reflect.Value) (any, bool) {
 		return "(empty)", true
 	}
 	return dataField.Elem().Interface(), true
+}
+
+// printMap 将 map 打印为 key-value 格式。
+func printMap(w io.Writer, v reflect.Value) {
+	if v.Len() == 0 {
+		fmt.Fprintln(w, "(empty)")
+		return
+	}
+
+	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	for _, key := range v.MapKeys() {
+		name := fmt.Sprintf("%v", key.Interface())
+		value := formatFieldValue(v.MapIndex(key))
+		fmt.Fprintf(tw, "%s:\t%s\n", name, value)
+	}
+	tw.Flush()
 }
 
 // printStruct 将单个结构体打印为 key-value 格式。

@@ -105,7 +105,7 @@ func (c *Client) submitLogin(randNum, captchaCode, encryptedPass string) (string
 
 	var loginResp LoginResponse
 	if err := json.Unmarshal(body, &loginResp); err == nil {
-		c.logger.Info("登录响应: ", loginResp)
+		c.logger.Info("登录响应:", loginResp.String())
 		if !loginResp.IsSuccess() {
 			if loginResp.ErrCode == -980023096 {
 				return "", errPasswordWrong

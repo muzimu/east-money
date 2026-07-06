@@ -3,6 +3,7 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -216,4 +217,13 @@ type LoginResponse struct {
 func (r *LoginResponse) IsSuccess() bool {
 	s := strings.Trim(string(r.Status), `"`)
 	return s == "0"
+}
+
+// String 返回适合日志打印的字符串表示，避免 json.RawMessage 按字节数组输出。
+func (r LoginResponse) String() string {
+	status := strings.Trim(string(r.Status), `"`)
+	if status == "" {
+		status = "?"
+	}
+	return fmt.Sprintf("Status=%s Errcode=%d Message=%s Return_Code=%d", status, r.ErrCode, strings.Trim(r.Message, `"`), r.ReturnCode)
 }

@@ -12,15 +12,15 @@ import (
 
 // 全局变量：CLI flags 值（优先级最高）。
 var (
-	flagUser     string
-	flagPassword string
-	flagModel    string
-	flagDict     string
-	flagONNXLib  string
+	flagUser      string
+	flagPassword  string
+	flagModel     string
+	flagDict      string
+	flagONNXLib   string
 	flagOCRRemote string
-	flagConfig   string
-	flagSession  string
-	flagLog      string
+	flagConfig    string
+	flagSession   string
+	flagLog       string
 
 	// 历史查询参数
 	flagHistorySize int
@@ -37,8 +37,8 @@ var (
 	cfg = Config{
 		Log: ".eastmoney/eastmoney.log",
 		OCR: OCRConfig{
-			Model: "./go-ocr/ddddocr_weights/common.onnx",
-			Dict:  "./go-ocr/ddddocr_weights/dict.txt",
+			Model: "./go-ocr-model/ddddocr/common.onnx",
+			Dict:  "./go-ocr-model/ddddocr/dict.txt",
 		},
 	}
 
@@ -49,15 +49,37 @@ var (
 )
 
 func main() {
+	// flag/参数解析错误时显示用法说明
+	rootCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		cmd.Println(cmd.UsageString())
+		return err
+	})
+
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "错误: %v\n", err)
+		// 业务错误通过 printOutput 按 --format 格式输出
+		flagFormat = resolveFormat()
+		printOutput(map[string]string{
+			"状态": "失败",
+			"错误": err.Error(),
+		})
 		os.Exit(1)
 	}
 }
 
+// resolveFormat 返回当前生效的输出格式，优先使用 flagFormat；
+// 当 flagFormat 未初始化（如 PersistentPreRunE 之前出错）时回退到 human。
+func resolveFormat() string {
+	if flagFormat != "" {
+		return flagFormat
+	}
+	return formatHuman
+}
+
 var rootCmd = &cobra.Command{
-	Use:   "eastmoney",
-	Short: "东方财富自动交易 CLI",
+	Use:           "eastmoney",
+	Short:         "东方财富自动交易 CLI",
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	Long: `East Money CLI — 东方财富自动交易命令行工具。
 
 支持登录、查询（资产/订单/成交/历史）、买入、卖出、撤单等操作。

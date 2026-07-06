@@ -23,6 +23,7 @@ var loginCmd = &cobra.Command{
 		}
 
 		printOutput(client.WrapResponse(0, "", 0, &map[string]string{
+			"状态":          "登录成功",
 			"validateKey": key,
 		}))
 		return nil
