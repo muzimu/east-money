@@ -22,3 +22,6 @@ ocr:
   # Linux AMD64:  ./go-ocr-model/lib/onnxruntime_amd64.so
   # Windows:      ./go-ocr-model/lib/onnxruntime.dll
   onnx_lib: ""
+  # 远程 OCR 服务地址（兼容 ddddocr-fastapi）
+  # 设置后将跳过本地 ONNX 模型，直接调用远程服务
+  # remote: "http://localhost:8000/ocr"

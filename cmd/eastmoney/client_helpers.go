@@ -20,9 +20,15 @@ func createClient(skipCookies bool) (*client.Client, error) {
 		return nil, fmt.Errorf("请提供用户名和密码（-u/-p、环境变量或配置文件）")
 	}
 
-	recognizer, err := captcha.NewDefaultRecognizer(cfg.OCR.Model, cfg.OCR.Dict, cfg.OCR.ONNXLib)
-	if err != nil {
-		return nil, fmt.Errorf("创建 OCR 引擎失败: %w", err)
+	var recognizer captcha.Recognizer
+	var err error
+	if cfg.OCR.Remote != "" {
+		recognizer = captcha.NewRemoteRecognizer(captcha.WithRemoteEndpoint(cfg.OCR.Remote))
+	} else {
+		recognizer, err = captcha.NewDefaultRecognizer(cfg.OCR.Model, cfg.OCR.Dict, cfg.OCR.ONNXLib)
+		if err != nil {
+			return nil, fmt.Errorf("创建 OCR 引擎失败: %w", err)
+		}
 	}
 
 	c, err := client.NewClient(u, p, recognizer, client.WithLogger(&zerologAdapter{cmdLogger}))

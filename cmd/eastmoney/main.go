@@ -17,6 +17,7 @@ var (
 	flagModel    string
 	flagDict     string
 	flagONNXLib  string
+	flagOCRRemote string
 	flagConfig   string
 	flagSession  string
 	flagLog      string
@@ -85,6 +86,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&flagModel, "model", "", "ddddocr 模型文件路径")
 	rootCmd.PersistentFlags().StringVar(&flagDict, "dict", "", "ddddocr 字典文件路径")
 	rootCmd.PersistentFlags().StringVar(&flagONNXLib, "onnx-lib", "", "onnxruntime 共享库路径（留空自动检测 go-ocr/lib/）")
+	rootCmd.PersistentFlags().StringVar(&flagOCRRemote, "ocr-remote", "", "远程 OCR 服务地址（如 http://localhost:8000/ocr），设置后跳过本地 ONNX 模型")
 	rootCmd.PersistentFlags().StringVar(&flagConfig, "config", "./config.yaml", "配置文件路径")
 	rootCmd.PersistentFlags().StringVar(&flagSession, "session", ".eastmoney/session.json", "会话持久化文件路径")
 	rootCmd.PersistentFlags().StringVar(&flagLog, "log", ".eastmoney/eastmoney.log", "日志文件路径")

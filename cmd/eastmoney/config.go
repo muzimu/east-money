@@ -19,10 +19,12 @@ type Config struct {
 }
 
 // OCRConfig OCR 相关配置。
+// 当 Remote 非空时使用远程 OCR 服务，否则使用本地 ONNX 模型。
 type OCRConfig struct {
 	Model   string `yaml:"model"`
 	Dict    string `yaml:"dict"`
 	ONNXLib string `yaml:"onnx_lib"`
+	Remote  string `yaml:"remote"`
 }
 
 // mergeConfig 按优先级合并配置：CLI flags > 环境变量 > YAML 配置 > 默认值。
@@ -65,9 +67,12 @@ func mergeConfig() error {
 	if flagONNXLib != "" {
 		cfg.OCR.ONNXLib = flagONNXLib
 	}
+	if flagOCRRemote != "" {
+		cfg.OCR.Remote = flagOCRRemote
+	}
 
-	// 4. ONNX 库自动检测（仅当未显式指定时）
-	if cfg.OCR.ONNXLib == "" {
+	// 4. ONNX 库自动检测（仅当使用本地 OCR 且未显式指定时）
+	if cfg.OCR.Remote == "" && cfg.OCR.ONNXLib == "" {
 		cfg.OCR.ONNXLib = autoDetectONNXLib()
 	}
 
@@ -93,6 +98,9 @@ func applyFileConfig(fc *Config) {
 	}
 	if fc.OCR.ONNXLib != "" {
 		cfg.OCR.ONNXLib = fc.OCR.ONNXLib
+	}
+	if fc.OCR.Remote != "" {
+		cfg.OCR.Remote = fc.OCR.Remote
 	}
 }
 
