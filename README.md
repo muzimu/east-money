@@ -1,6 +1,6 @@
 # east-money
 
-东方财富自动交易接口 Go 语言实现，基于 [emtl](https://github.com/jadbin/emtl) 的Golang版本实现与优化。
+东方财富自动交易接口 Go 语言实现，基于 [emtl](https://github.com/riiy/emtl) 的Golang版本实现与优化。
 
 [![Go Version](https://img.shields.io/badge/Go-1.26.1-blue)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
