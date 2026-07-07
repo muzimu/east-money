@@ -2,3 +2,4 @@
 config.yaml
 .eastmoney
 dist/
+.serena
