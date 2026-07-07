@@ -2,9 +2,11 @@ package client
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strings"
 	"time"
 
 	eastmoney "github.com/muzimu/east-money"
@@ -98,8 +100,8 @@ func NewClient(username, password string, captchaRecognizer captcha.Recognizer, 
 	// 默认值
 	jar, _ := cookiejar.New(nil)
 	c := &Client{
-		username:  username,
-		password:  password,
+		username: username,
+		password: password,
 		httpClient: &http.Client{
 			Jar:     jar,
 			Timeout: 30 * time.Second,
@@ -163,4 +165,30 @@ func (c *Client) ImportCookies(cookies []*http.Cookie) {
 func (c *Client) baseURL() *url.URL {
 	u, _ := url.Parse(eastmoney.BaseURL)
 	return u
+}
+
+func (c *Client) newRequest(method, targetURL string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, targetURL, body)
+	if err != nil {
+		return nil, err
+	}
+	applyBaseHeaders(req)
+	return req, nil
+}
+
+func (c *Client) newFormRequest(targetURL string, form url.Values) (*http.Request, error) {
+	req, err := c.newRequest(http.MethodPost, targetURL, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req, nil
+}
+
+func applyBaseHeaders(req *http.Request) {
+	for k, v := range eastmoney.BaseHeaders() {
+		if req.Header.Get(k) == "" {
+			req.Header.Set(k, v)
+		}
+	}
 }

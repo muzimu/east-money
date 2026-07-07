@@ -77,7 +77,5 @@ var URLMap = map[string]string{
 func BaseHeaders() map[string]string {
 	return map[string]string{
 		"User-Agent": DefaultUserAgent,
-		"Origin":     "https://jywg.18.cn",
-		"Host":       "jywg.18.cn",
 	}
 }

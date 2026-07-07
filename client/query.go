@@ -162,9 +162,7 @@ func getSnapshot(hc *http.Client, symbolCode string) (*SnapshotResponse, error) 
 	if err != nil {
 		return nil, fmt.Errorf("创建行情请求失败: %w", err)
 	}
-	for k, v := range eastmoney.BaseHeaders() {
-		req.Header.Set(k, v)
-	}
+	applyBaseHeaders(req)
 
 	resp, err := hc.Do(req)
 	if err != nil {
@@ -226,7 +224,12 @@ func (c *Client) querySomethingInner(tag string, body url.Values, allowRelogin b
 	c.logger.Debugf("请求 %s: %s", tag, fullURL)
 
 	data, err := c.doWithRetry(func() ([]byte, error) {
-		resp, err := c.httpClient.PostForm(fullURL, body)
+		req, err := c.newFormRequest(fullURL, body)
+		if err != nil {
+			return nil, fmt.Errorf("创建 HTTP 请求失败: %w", err)
+		}
+
+		resp, err := c.httpClient.Do(req)
 		if err != nil {
 			return nil, fmt.Errorf("HTTP 请求失败: %w", err)
 		}

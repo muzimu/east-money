@@ -14,6 +14,7 @@ import (
 	_ "image/png"  // PNG 解码器
 	"io"
 	"math/big"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -92,7 +93,12 @@ func (c *Client) submitLogin(randNum, captchaCode, encryptedPass string) (string
 	}
 
 	c.logger.Debugf("发送登录请求: %s", loginURL)
-	resp, err := c.httpClient.PostForm(loginURL, form)
+	req, err := c.newFormRequest(loginURL, form)
+	if err != nil {
+		return "", fmt.Errorf("创建登录请求失败: %w", err)
+	}
+
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("登录 POST 请求失败: %w", err)
 	}
@@ -158,7 +164,12 @@ func (c *Client) tryGetCaptcha() (string, string, error) {
 
 	// 获取验证码图片
 	captchaURL := eastmoney.BaseURL + eastmoney.CaptchaPath + randNum
-	resp, err := c.httpClient.Get(captchaURL)
+	req, err := c.newRequest(http.MethodGet, captchaURL, nil)
+	if err != nil {
+		return "", "", fmt.Errorf("创建验证码请求失败: %w", err)
+	}
+
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return "", "", fmt.Errorf("获取验证码图片失败: %w", err)
 	}
@@ -188,7 +199,12 @@ func (c *Client) tryGetCaptcha() (string, string, error) {
 // extractValidateKey 访问 Trade/Buy 页面，从 HTML 中提取 em_validatekey。
 func (c *Client) extractValidateKey() (string, error) {
 	pageURL := eastmoney.BaseURL + eastmoney.TradeBuyPage
-	resp, err := c.httpClient.Get(pageURL)
+	req, err := c.newRequest(http.MethodGet, pageURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("创建交易页面请求失败: %w", err)
+	}
+
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("获取交易页面失败: %w", err)
 	}
