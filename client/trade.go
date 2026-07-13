@@ -16,7 +16,7 @@ func (c *Client) CreateOrder(req *CreateOrderRequest) (*CreateOrderResponse, err
 		"stockCode": {req.StockCode},
 		"tradeType": {req.TradeType},
 		"zqmc":      {""},
-		"market":    {req.Market},
+		"marekt":    {req.Market}, // 服务端字段错误 非拼写错误 请勿纠正
 		"price":     {strconv.FormatFloat(req.Price, 'f', -1, 64)},
 		"amount":    {strconv.Itoa(req.Amount)},
 	}
