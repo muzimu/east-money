@@ -51,7 +51,7 @@ var buyCmd = &cobra.Command{
 		}
 
 		tradeType := "B"
-		if IsReverseRepo(market) {
+		if IsReverseRepo(code) {
 			tradeType = "0S"
 		}
 
