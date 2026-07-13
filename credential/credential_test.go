@@ -115,7 +115,7 @@ func TestGetValidateKey_ConcurrentDoubleCheck(t *testing.T) {
 	n := 20
 	keys := make([]string, n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
@@ -128,7 +128,7 @@ func TestGetValidateKey_ConcurrentDoubleCheck(t *testing.T) {
 	wg.Wait()
 
 	// 所有 goroutine 应获得相同的 key
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if keys[i] != "" {
 			assert.Equal(t, "concurrent-key", keys[i])
 		}

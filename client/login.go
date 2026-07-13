@@ -54,7 +54,7 @@ func (c *Client) doLogin() (string, error) {
 
 	c.logger.Debug("开始登录...")
 
-	for attempt := 0; attempt < eastmoney.MaxCaptchaRetry; attempt++ {
+	for range eastmoney.MaxCaptchaRetry {
 		randNum, captchaCode, err := c.getCaptcha()
 		if err != nil {
 			return "", fmt.Errorf("获取验证码失败: %w", err)
@@ -135,7 +135,7 @@ func (c *Client) submitLogin(randNum, captchaCode, encryptedPass string) (string
 // getCaptcha 获取验证码图片并进行 OCR 识别。
 // 失败时最多重试 MaxCaptchaRetry 次（匹配 Python 递归重试行为）。
 func (c *Client) getCaptcha() (randNum string, code string, err error) {
-	for attempt := 0; attempt < eastmoney.MaxCaptchaRetry; attempt++ {
+	for attempt := range eastmoney.MaxCaptchaRetry {
 		randNum, code, err = c.tryGetCaptcha()
 		if err != nil {
 			c.logger.Debugf("验证码尝试 %d/%d 失败: %v", attempt+1, eastmoney.MaxCaptchaRetry, err)

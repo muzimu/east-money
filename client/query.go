@@ -281,10 +281,9 @@ func (c *Client) doWithRetry(fn func() ([]byte, error)) ([]byte, error) {
 	var lastErr error
 	for attempt := 0; attempt <= c.retryMax; attempt++ {
 		if attempt > 0 {
-			wait := c.retryWait * time.Duration(1<<(attempt-1)) // 指数退避
-			if wait > 30*time.Second {
-				wait = 30 * time.Second
-			}
+			wait := min(
+				// 指数退避
+				c.retryWait*time.Duration(1<<(attempt-1)), 30*time.Second)
 			c.logger.Debugf("重试 %d/%d, 等待 %v", attempt, c.retryMax, wait)
 			time.Sleep(wait)
 		}

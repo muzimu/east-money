@@ -66,14 +66,14 @@ func (s *stubSession) CookieJar() http.CookieJar {
 	return jar
 }
 
-func (m *mockLogger) Info(args ...interface{}) { m.infos = append(m.infos, fmt.Sprint(args...)) }
-func (m *mockLogger) Infof(format string, args ...interface{}) {
+func (m *mockLogger) Info(args ...any) { m.infos = append(m.infos, fmt.Sprint(args...)) }
+func (m *mockLogger) Infof(format string, args ...any) {
 	m.infos = append(m.infos, fmt.Sprintf(format, args...))
 }
-func (m *mockLogger) Debug(args ...interface{})                 {}
-func (m *mockLogger) Debugf(format string, args ...interface{}) {}
-func (m *mockLogger) Error(args ...interface{})                 { m.errors = append(m.errors, fmt.Sprint(args...)) }
-func (m *mockLogger) Errorf(format string, args ...interface{}) {
+func (m *mockLogger) Debug(args ...any)                 {}
+func (m *mockLogger) Debugf(format string, args ...any) {}
+func (m *mockLogger) Error(args ...any)                 { m.errors = append(m.errors, fmt.Sprint(args...)) }
+func (m *mockLogger) Errorf(format string, args ...any) {
 	m.errors = append(m.errors, fmt.Sprintf(format, args...))
 }
 

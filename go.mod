@@ -1,6 +1,6 @@
 module github.com/muzimu/east-money
 
-go 1.26.1
+go 1.26.5
 
 replace github.com/getcharzp/go-ocr => github.com/muzimu/go-ocr v0.0.0-20260701063513-2aaa36d7f4d5
 

@@ -17,12 +17,12 @@ import (
 
 // Logger 日志接口，兼容标准库和第三方日志库。
 type Logger interface {
-	Info(args ...interface{})
-	Infof(format string, args ...interface{})
-	Debug(args ...interface{})
-	Debugf(format string, args ...interface{})
-	Error(args ...interface{})
-	Errorf(format string, args ...interface{})
+	Info(args ...any)
+	Infof(format string, args ...any)
+	Debug(args ...any)
+	Debugf(format string, args ...any)
+	Error(args ...any)
+	Errorf(format string, args ...any)
 }
 
 // LoginFailureCallback 登录失败回调，用于外部监控和告警。

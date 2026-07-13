@@ -45,7 +45,7 @@ func fprintHuman(w io.Writer, data any) {
 	v := reflect.ValueOf(data)
 
 	// 处理指针
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		if v.IsNil() {
 			fmt.Fprintln(w, "(nil)")
 			return
@@ -169,7 +169,7 @@ func printStruct(w io.Writer, v reflect.Value) {
 
 // isStructPtr 判断是否为非 nil 的结构体指针。
 func isStructPtr(v reflect.Value) bool {
-	return v.Kind() == reflect.Ptr && !v.IsNil() && v.Elem().Kind() == reflect.Struct
+	return v.Kind() == reflect.Pointer && !v.IsNil() && v.Elem().Kind() == reflect.Struct
 }
 
 // printTable 将结构体切片打印为对齐表格（支持 CJK 字符宽度）。
@@ -180,7 +180,7 @@ func printTable(w io.Writer, v reflect.Value) {
 	}
 
 	first := v.Index(0)
-	if first.Kind() == reflect.Ptr {
+	if first.Kind() == reflect.Pointer {
 		if first.IsNil() {
 			fmt.Fprintln(w, "(empty)")
 			return
@@ -217,7 +217,7 @@ func printTable(w io.Writer, v reflect.Value) {
 
 	for i := 0; i < v.Len(); i++ {
 		item := v.Index(i)
-		if item.Kind() == reflect.Ptr {
+		if item.Kind() == reflect.Pointer {
 			if item.IsNil() {
 				continue
 			}
@@ -268,9 +268,9 @@ func formatFieldValue(field reflect.Value) string {
 		return "-"
 	}
 	switch {
-	case field.Kind() == reflect.Ptr && !field.IsNil():
+	case field.Kind() == reflect.Pointer && !field.IsNil():
 		return fmt.Sprintf("%v", field.Elem().Interface())
-	case field.Kind() == reflect.Ptr && field.IsNil():
+	case field.Kind() == reflect.Pointer && field.IsNil():
 		return "-"
 	case field.Kind() == reflect.Slice:
 		return fmt.Sprintf("[%d items]", field.Len())
@@ -307,7 +307,7 @@ func isStructSlice(v reflect.Value) bool {
 		return false
 	}
 	first := v.Index(0)
-	if first.Kind() == reflect.Ptr {
+	if first.Kind() == reflect.Pointer {
 		if first.IsNil() {
 			return false
 		}
