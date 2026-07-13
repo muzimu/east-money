@@ -23,9 +23,14 @@ var (
 	flagLog       string
 
 	// 历史查询参数
-	flagHistorySize int
-	flagStartDate   string
-	flagEndDate     string
+	flagHistorySize    int
+	flagStartDate      string
+	flagEndDate        string
+
+	// 内部使用的查询参数（不暴露给用户）
+	flagQueryStockCode string
+	flagQueryPrice     string
+	flagQueryTradeType string
 
 	// 输出格式
 	flagFormat string
@@ -118,6 +123,14 @@ func init() {
 	rootCmd.PersistentFlags().IntVar(&flagHistorySize, "size", 20, "历史查询条数")
 	rootCmd.PersistentFlags().StringVar(&flagStartDate, "start", "", "查询起始日期 (2006-01-02)")
 	rootCmd.PersistentFlags().StringVar(&flagEndDate, "end", "", "查询结束日期 (2006-01-02)")
+
+	// 可操作数量查询 flags（内部使用，通过位置参数传入）
+	rootCmd.PersistentFlags().StringVar(&flagQueryStockCode, "query-stock-code", "", "")
+	rootCmd.PersistentFlags().StringVar(&flagQueryPrice, "query-price", "", "")
+	rootCmd.PersistentFlags().StringVar(&flagQueryTradeType, "query-trade-type", "", "")
+	rootCmd.PersistentFlags().MarkHidden("query-stock-code")
+	rootCmd.PersistentFlags().MarkHidden("query-price")
+	rootCmd.PersistentFlags().MarkHidden("query-trade-type")
 
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(buyCmd)

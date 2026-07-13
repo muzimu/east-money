@@ -50,9 +50,14 @@ var buyCmd = &cobra.Command{
 			return err
 		}
 
+		tradeType := "B"
+		if IsReverseRepo(market) {
+			tradeType = "0S"
+		}
+
 		resp, err := c.CreateOrder(&client.CreateOrderRequest{
 			StockCode: code,
-			TradeType: "B",
+			TradeType: tradeType,
 			Market:    market,
 			Price:     price,
 			Amount:    amount,
@@ -125,6 +130,20 @@ var queryHandlers = map[string]queryHandler{
 		view := resp.Data[0].ToView()
 		return client.WrapResponse(resp.Status, resp.Message, resp.Errcode, view), nil
 	},
+	"operate-amount": func(c *client.Client) (any, error) {
+		// 自动判断交易类型
+		tradeType := "B"
+		if IsReverseRepo(flagQueryStockCode) {
+			tradeType = "0S"
+		}
+
+		resp, err := c.QueryOperateAmount(flagQueryStockCode, flagQueryPrice, tradeType)
+		if err != nil {
+			return nil, err
+		}
+		views := client.ConvertSlice(resp.Data, func(r client.OperateAmount) client.OperateAmountView { return *r.ToView() })
+		return client.WrapResponse(resp.Status, resp.Message, resp.Errcode, &views), nil
+	},
 	"order": func(c *client.Client) (any, error) {
 		resp, err := c.QueryOrders()
 		if err != nil {
@@ -180,26 +199,41 @@ var queryHandlers = map[string]queryHandler{
 }
 
 var queryCmd = &cobra.Command{
-	Use:   "query [asset|order|trade|history-order|history-trade|funds]",
+	Use:   "query [asset|operate-amount|order|trade|history-order|history-trade|funds]",
 	Short: "查询账户信息",
-	Long: `查询账户资产、委托、成交或资金流水。
+	Long: `查询账户资产、可操作数量、委托、成交或资金流水。
 
 子命令:
-  asset         查询资产与持仓
-  order         查询当日委托
-  trade         查询当日成交
-  history-order 查询历史委托（需 --start 和 --end）
-  history-trade 查询历史成交（需 --start 和 --end）
-  funds         查询资金流水（需 --start 和 --end）`,
-	Args: cobra.ExactArgs(1),
+  asset          查询资产与持仓
+  operate-amount 查询可操作数量（格式: CODE 或 CODE-PRICE，逆回购价格可选默认1）
+  order          查询当日委托
+  trade          查询当日成交
+  history-order  查询历史委托（需 --start 和 --end）
+  history-trade  查询历史成交（需 --start 和 --end）
+  funds          查询资金流水（需 --start 和 --end）`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		handler, ok := queryHandlers[args[0]]
+		subcmd := args[0]
+		handler, ok := queryHandlers[subcmd]
 		if !ok {
-			return fmt.Errorf("未知查询类型: %s (可选: asset, order, trade, history-order, history-trade, funds)", args[0])
+			return fmt.Errorf("未知查询类型: %s (可选: asset, operate-amount, order, trade, history-order, history-trade, funds)", subcmd)
 		}
 
-		if err := validateDateRange(args[0]); err != nil {
+		if err := validateDateRange(subcmd); err != nil {
 			return err
+		}
+
+		// operate-amount 使用位置参数而非 flag
+		if subcmd == "operate-amount" {
+			if len(args) != 2 {
+				return fmt.Errorf("operate-amount 需要参数: CODE 或 CODE-PRICE (如 204001 或 600519-1850)")
+			}
+			code, price, err := parseQueryOperateArgs(args[1])
+			if err != nil {
+				return err
+			}
+			flagQueryStockCode = code
+			flagQueryPrice = price
 		}
 
 		c, err := createClient(false)

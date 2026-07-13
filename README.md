@@ -306,6 +306,13 @@ make build
 # 查询当日成交
 ./eastmoney query trade
 
+# 查询可操作数量（逆回购价格可选 不影响查询结果）
+./eastmoney query operate-amount 204001
+./eastmoney query operate-amount 204001-1.700
+
+# 查询可操作数量（股票及ETF价格必填）
+./eastmoney query operate-amount 600519-1850
+
 # 查询历史委托 / 成交 / 资金流水
 ./eastmoney query history-order --start 2026-01-01 --end 2026-01-31
 ./eastmoney query history-trade --start 2026-01-01 --end 2026-01-31
@@ -313,6 +320,9 @@ make build
 
 # 买入（代码-价格-数量）
 ./eastmoney buy 000001-10.50-100
+
+# 买入逆回购（自动识别交易类型）
+./eastmoney buy 204001-1.415-10
 
 # 卖出
 ./eastmoney sell 600519-1850.00-100
@@ -352,6 +362,7 @@ make build
 | 方法 | 说明 |
 | ---- | ---- |
 | `QueryAssetAndPosition()` | 查询账户资产与持仓 |
+| `QueryOperateAmount(stockCode, price, tradeType)` | 查询指定证券的可操作数量 |
 | `QueryOrders()` | 查询当日委托 |
 | `QueryTrades()` | 查询当日成交 |
 | `QueryHistoryOrders(params)` | 查询历史委托 |
@@ -359,7 +370,8 @@ make build
 | `QueryFundsFlow(params)` | 查询资金流水 |
 | `CreateOrder(req)` | 提交买入/卖出委托 |
 | `CancelOrder(orderStr)` | 撤销委托 |
-| `GetLastPrice(code, market)` | 查询股票最新价格（无需登录） |
+| `GetLastPrice(symbolCode)` | 查询股票最新价格（无需登录） |
+| `GetSnapshot(symbolCode)` | 查询股票完整行情快照（无需登录） |
 | `GetValidateKey()` | 获取当前有效会话凭证 |
 | `ForceReLogin()` | 强制重新登录 |
 | `SetCache(cache)` | 替换缓存后端 |

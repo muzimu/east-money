@@ -69,6 +69,11 @@ type OrderResultView struct {
 	OrderID   string `json:"委托编号"` // 委托编号
 }
 
+// OperateAmountView 可操作数量（中文输出）。
+type OperateAmountView struct {
+	AvailableQuantity string `json:"可操作数量"` // 可操作数量
+}
+
 // =============================================================================
 // 转换函数：API 结构体 → 中文展示结构体
 // =============================================================================
@@ -128,6 +133,16 @@ func (f *FundsFlowRecord) ToView() *FundsFlowView {
 	}
 	v := FundsFlowView(*f)
 	return &v
+}
+
+// ToView 将 OperateAmount 转为中文展示。
+func (o *OperateAmount) ToView() *OperateAmountView {
+	if o == nil {
+		return nil
+	}
+	return &OperateAmountView{
+		AvailableQuantity: o.AvailableQuantity,
+	}
 }
 
 // =============================================================================

@@ -362,6 +362,38 @@ func TestClientQueryOrders(t *testing.T) {
 	assert.Equal(t, []OrderRecord{{OrderID: "order-1"}}, resp.Data)
 }
 
+func TestClientQueryOperateAmount(t *testing.T) {
+	mockCap := &mockRecognizer{result: "1234"}
+	customClient := &http.Client{
+		Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
+			assert.Equal(t, http.MethodPost, req.Method)
+			assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+			assert.Equal(t, "validate-123", req.URL.Query().Get("validatekey"))
+			body, err := io.ReadAll(req.Body)
+			assert.NoError(t, err)
+			form, err := url.ParseQuery(string(body))
+			assert.NoError(t, err)
+			assert.Equal(t, "204001", form.Get("stockCode"))
+			assert.Equal(t, "1.415", form.Get("price"))
+			assert.Equal(t, "0S", form.Get("tradeType"))
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader(`{"Message":null,"Status":0,"Errcode":0,"Data":[{"Kczsl":"1000"}]}`)),
+				Header:     make(http.Header),
+			}, nil
+		}),
+	}
+	c, err := NewClient("user", "pass", mockCap, WithHTTPClient(customClient))
+	assert.NoError(t, err)
+	c.session = &stubSession{key: "validate-123"}
+
+	resp, err := c.QueryOperateAmount("204001", "1.415", "0S")
+
+	assert.NoError(t, err)
+	assert.Equal(t, 0, resp.Status)
+	assert.Equal(t, []OperateAmount{{AvailableQuantity: "1000"}}, resp.Data)
+}
+
 func TestClientQueryMethods(t *testing.T) {
 	tests := []struct {
 		name       string

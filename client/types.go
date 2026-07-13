@@ -49,6 +49,17 @@ type AssetPositionResponse struct {
 	Data []AccountSummary `json:"Data"`
 }
 
+// OperateAmountResponse 可操作数量查询响应。
+type OperateAmountResponse struct {
+	BaseResponse
+	Data []OperateAmount `json:"Data"`
+}
+
+// OperateAmount 可操作数量。
+type OperateAmount struct {
+	AvailableQuantity string `json:"Kczsl"`
+}
+
 // AccountSummary 账户总览（资金 + 持仓列表）。
 type AccountSummary struct {
 	TotalAsset  string     `json:"Zzc"`       // 总资产

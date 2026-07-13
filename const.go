@@ -13,13 +13,14 @@ const (
 	TradeBuyPage = "/Trade/Buy"
 
 	// 查询接口（validateKey 在运行时拼接）
-	QueryAssetAndPos = "/Com/queryAssetAndPositionV1?validatekey="
-	QueryOrders      = "/Search/GetOrdersData?validatekey="
-	QueryTrades      = "/Search/GetDealData?validatekey="
-	QueryHisOrders   = "/Search/GetHisOrdersData?validatekey="
-	QueryHisTrades   = "/Search/GetHisDealData?validatekey="
-	QueryFundsFlow   = "/Search/GetFundsFlow?validatekey="
-	QueryPositions   = "/Search/GetStockList?validatekey="
+	QueryAssetAndPos   = "/Com/queryAssetAndPositionV1?validatekey="
+	QueryOperateAmount = "/Com/GetCanOperateAmount?validatekey="
+	QueryOrders        = "/Search/GetOrdersData?validatekey="
+	QueryTrades        = "/Search/GetDealData?validatekey="
+	QueryHisOrders     = "/Search/GetHisOrdersData?validatekey="
+	QueryHisTrades     = "/Search/GetHisDealData?validatekey="
+	QueryFundsFlow     = "/Search/GetFundsFlow?validatekey="
+	QueryPositions     = "/Search/GetStockList?validatekey="
 
 	// 交易接口
 	CreateOrder = "/Trade/SubmitTradeV2?validatekey="
@@ -62,15 +63,16 @@ c0AT4qIJ/xtbBcHkFPK77upnsfDTJiVEuQDH+MiMeb+XhCLNKZGp0yaUU6GlxZdp
 
 // URLMap 请求 tag 到 API 端点的映射。
 var URLMap = map[string]string{
-	"query_asset_and_pos": BaseURL + QueryAssetAndPos,
-	"query_orders":        BaseURL + QueryOrders,
-	"query_trades":        BaseURL + QueryTrades,
-	"query_his_orders":    BaseURL + QueryHisOrders,
-	"query_his_trades":    BaseURL + QueryHisTrades,
-	"query_funds_flow":    BaseURL + QueryFundsFlow,
-	"query_positions":     BaseURL + QueryPositions,
-	"create_order":        BaseURL + CreateOrder,
-	"cancel_order":        BaseURL + CancelOrder,
+	"query_asset_and_pos":  BaseURL + QueryAssetAndPos,
+	"query_operate_amount": BaseURL + QueryOperateAmount,
+	"query_orders":         BaseURL + QueryOrders,
+	"query_trades":         BaseURL + QueryTrades,
+	"query_his_orders":     BaseURL + QueryHisOrders,
+	"query_his_trades":     BaseURL + QueryHisTrades,
+	"query_funds_flow":     BaseURL + QueryFundsFlow,
+	"query_positions":      BaseURL + QueryPositions,
+	"create_order":         BaseURL + CreateOrder,
+	"cancel_order":         BaseURL + CancelOrder,
 }
 
 // BaseHeaders 返回基础请求头的副本。

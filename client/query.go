@@ -30,6 +30,20 @@ func (c *Client) QueryAssetAndPosition() (*AssetPositionResponse, error) {
 	return &resp, nil
 }
 
+// QueryOperateAmount 查询指定证券在价格和交易类型下的可操作数量。
+func (c *Client) QueryOperateAmount(stockCode, price, tradeType string) (*OperateAmountResponse, error) {
+	body := url.Values{"stockCode": {stockCode}, "price": {price}, "tradeType": {tradeType}}
+	data, err := c.querySomething("query_operate_amount", body)
+	if err != nil {
+		return nil, err
+	}
+	var resp OperateAmountResponse
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, fmt.Errorf("解析可操作数量响应失败: %w", err)
+	}
+	return &resp, nil
+}
+
 // QueryOrders 查询当日委托。
 func (c *Client) QueryOrders() (*OrdersResponse, error) {
 	body := url.Values{"qqhs": {"100"}, "dwc": {""}}
