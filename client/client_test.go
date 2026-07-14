@@ -582,7 +582,7 @@ func TestClientCreateOrder(t *testing.T) {
 			assert.Equal(t, "100", form.Get("amount"))
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader(`{"Status":0,"Wtrq":"20260101","Wtbh":"order-1"}`)),
+				Body:       io.NopCloser(strings.NewReader(`{"Status":0,"Count":1,"Data":[{"Htxh":"0101723705","Wtbh":"1723705"}]}`)),
 				Header:     make(http.Header),
 			}, nil
 		}),
@@ -594,8 +594,12 @@ func TestClientCreateOrder(t *testing.T) {
 	resp, err := c.CreateOrder(&CreateOrderRequest{StockCode: "600000", TradeType: "B", Market: "1", Price: 12.34, Amount: 100})
 
 	assert.NoError(t, err)
-	assert.Equal(t, "20260101", resp.OrderDate)
-	assert.Equal(t, "order-1", resp.OrderID)
+	assert.Equal(t, 0, resp.Status)
+	assert.Equal(t, 1, resp.Count)
+	d, ok := resp.First()
+	assert.True(t, ok)
+	assert.Equal(t, "1723705", d.OrderID)
+	assert.Equal(t, "0101723705", d.ContractID)
 }
 
 func TestClientCancelOrder(t *testing.T) {

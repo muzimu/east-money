@@ -65,8 +65,8 @@ type FundsFlowView struct {
 
 // OrderResultView 下单结果（中文输出）。
 type OrderResultView struct {
-	OrderDate string `json:"委托日期"` // 委托日期
-	OrderID   string `json:"委托编号"` // 委托编号
+	OrderID    string `json:"委托编号"` // 委托编号
+	ContractID string `json:"合同序号"` // 合同序号
 }
 
 // OperateAmountView 可操作数量（中文输出）。

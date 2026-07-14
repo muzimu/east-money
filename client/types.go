@@ -138,10 +138,25 @@ type FundsFlowRecord struct {
 }
 
 // CreateOrderResponse 下单响应。
+// 服务端将下单结果置于 Data 数组中，每项含合同序号(Htxh)与委托编号(Wtbh)。
 type CreateOrderResponse struct {
 	BaseResponse
-	OrderDate string `json:"Wtrq"` // 委托日期
-	OrderID   string `json:"Wtbh"` // 委托编号
+	Count int               `json:"Count"` // 返回条数
+	Data  []CreateOrderData `json:"Data"`  // 下单结果
+}
+
+// CreateOrderData 下单返回数据项。
+type CreateOrderData struct {
+	ContractID string `json:"Htxh"` // 合同序号
+	OrderID    string `json:"Wtbh"` // 委托编号
+}
+
+// First 返回首条下单结果，无数据时第二个返回值为 false。
+func (r *CreateOrderResponse) First() (CreateOrderData, bool) {
+	if len(r.Data) > 0 {
+		return r.Data[0], true
+	}
+	return CreateOrderData{}, false
 }
 
 // SnapshotResponse 行情快照响应。

@@ -30,6 +30,16 @@ var loginCmd = &cobra.Command{
 	},
 }
 
+// toOrderResultView 将下单响应转换为展示视图。
+func toOrderResultView(resp *client.CreateOrderResponse) *client.OrderResultView {
+	view := &client.OrderResultView{}
+	if d, ok := resp.First(); ok {
+		view.OrderID = d.OrderID
+		view.ContractID = d.ContractID
+	}
+	return view
+}
+
 var buyCmd = &cobra.Command{
 	Use:   "buy CODE-PRICE-AMOUNT",
 	Short: "买入股票",
@@ -66,10 +76,7 @@ var buyCmd = &cobra.Command{
 			return err
 		}
 
-		view := &client.OrderResultView{
-			OrderDate: resp.OrderDate,
-			OrderID:   resp.OrderID,
-		}
+		view := toOrderResultView(resp)
 		printOutput(client.WrapResponse(resp.Status, resp.Message, resp.Errcode, view))
 		return nil
 	},
@@ -105,10 +112,7 @@ var sellCmd = &cobra.Command{
 			return err
 		}
 
-		view := &client.OrderResultView{
-			OrderDate: resp.OrderDate,
-			OrderID:   resp.OrderID,
-		}
+		view := toOrderResultView(resp)
 		printOutput(client.WrapResponse(resp.Status, resp.Message, resp.Errcode, view))
 		return nil
 	},
