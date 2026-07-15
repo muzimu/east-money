@@ -306,6 +306,9 @@ make build
 # 查询当日成交
 ./eastmoney query trade
 
+# 查询当日可撤单委托
+./eastmoney query revocable
+
 # 查询可操作数量（逆回购价格可选 不影响查询结果）
 ./eastmoney query operate-amount 204001
 ./eastmoney query operate-amount 204001-1.700
@@ -327,8 +330,9 @@ make build
 # 卖出
 ./eastmoney sell 600519-1850.00-100
 
-# 撤单（委托日期_委托编号）
-./eastmoney cancel 20260520_130662
+# 撤单（委托日期_委托编号 或 委托编号，自动补全市场/买卖标志）
+./eastmoney cancel 20260714_1771064
+./eastmoney cancel 1771064
 
 # 行情（无需登录，无需 OCR）
 ./eastmoney price 000001
@@ -364,12 +368,14 @@ make build
 | `QueryAssetAndPosition()` | 查询账户资产与持仓 |
 | `QueryOperateAmount(stockCode, price, tradeType)` | 查询指定证券的可操作数量 |
 | `QueryOrders()` | 查询当日委托 |
+| `QueryRevocableOrders()` | 查询当日可撤单委托 |
 | `QueryTrades()` | 查询当日成交 |
 | `QueryHistoryOrders(params)` | 查询历史委托 |
 | `QueryHistoryTrades(params)` | 查询历史成交 |
 | `QueryFundsFlow(params)` | 查询资金流水 |
 | `CreateOrder(req)` | 提交买入/卖出委托 |
-| `CancelOrder(orderStr)` | 撤销委托 |
+| `CancelOrder(req)` | 撤销委托（需提供委托日期、编号、市场、买卖标志） |
+| `CancelOrderByID(orderStr)` | 按委托标识撤销委托，自动查询并补全市场/买卖标志 |
 | `GetLastPrice(symbolCode)` | 查询股票最新价格（无需登录） |
 | `GetSnapshot(symbolCode)` | 查询股票完整行情快照（无需登录） |
 | `GetValidateKey()` | 获取当前有效会话凭证 |

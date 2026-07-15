@@ -23,8 +23,9 @@ const (
 	QueryPositions     = "/Search/GetStockList?validatekey="
 
 	// 交易接口
-	CreateOrder = "/Trade/SubmitTradeV2?validatekey="
-	CancelOrder = "/Trade/RevokeOrders?validatekey="
+	CreateOrder    = "/Trade/SubmitTradeV2?validatekey="
+	CancelOrder    = "/Trade/cancelStockWEB?validatekey="
+	QueryRevocable = "/Trade/queryRevocableWEBV1?validatekey="
 
 	// 行情接口（无需登录）
 	SnapshotURL = "https://emhsmarketwg.eastmoneysec.com/api/SHSZQuoteSnapshot"
@@ -73,6 +74,7 @@ var URLMap = map[string]string{
 	"query_positions":      BaseURL + QueryPositions,
 	"create_order":         BaseURL + CreateOrder,
 	"cancel_order":         BaseURL + CancelOrder,
+	"query_revocable":      BaseURL + QueryRevocable,
 }
 
 // BaseHeaders 返回基础请求头的副本。

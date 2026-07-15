@@ -44,6 +44,21 @@ type OrderView struct {
 	OrderStatus string `json:"委托状态"` // 委托状态
 }
 
+// RevocableOrderView 可撤单委托记录（中文输出）。
+// 不含 Market/TradeFlag 等撤单内部参数，仅展示对用户有意义的字段。
+type RevocableOrderView struct {
+	OrderDate   string `json:"委托日期"` // 委托日期
+	OrderID     string `json:"委托编号"` // 委托编号
+	OrderTime   string `json:"委托时间"` // 委托时间
+	StockCode   string `json:"证券代码"` // 证券代码
+	StockName   string `json:"证券名称"` // 证券名称
+	TradeDesc   string `json:"委托方向"` // 委托方向
+	OrderPrice  string `json:"委托价格"` // 委托价格
+	OrderAmount string `json:"委托数量"` // 委托数量
+	DealAmount  string `json:"成交数量"` // 成交数量
+	OrderStatus string `json:"委托状态"` // 委托状态
+}
+
 // TradeView 成交记录（中文输出）。
 type TradeView struct {
 	TradeDate  string `json:"成交日期"` // 成交日期
@@ -115,6 +130,25 @@ func (o *OrderRecord) ToView() *OrderView {
 	}
 	v := OrderView(*o)
 	return &v
+}
+
+// ToView 将 RevocableOrder 转为中文展示，仅映射用户可见字段。
+func (o *RevocableOrder) ToView() *RevocableOrderView {
+	if o == nil {
+		return nil
+	}
+	return &RevocableOrderView{
+		OrderDate:   o.OrderDate,
+		OrderID:     o.OrderID,
+		OrderTime:   o.OrderTime,
+		StockCode:   o.StockCode,
+		StockName:   o.StockName,
+		TradeDesc:   o.TradeDesc,
+		OrderPrice:  o.OrderPrice,
+		OrderAmount: o.OrderAmount,
+		DealAmount:  o.DealAmount,
+		OrderStatus: o.OrderStatus,
+	}
 }
 
 // ToView 将 TradeRecord 转为中文展示。

@@ -58,6 +58,21 @@ func (c *Client) QueryOrders() (*OrdersResponse, error) {
 	return &resp, nil
 }
 
+// QueryRevocableOrders 查询当日可撤单委托。
+// 撤单接口所需的 market 与 mmlb 参数无法仅凭委托编号推断，
+// 须先经此接口取得可撤单列表，匹配出对应委托后取其 Market 与 Mmbz。
+func (c *Client) QueryRevocableOrders() (*RevocableOrderResponse, error) {
+	data, err := c.querySomething("query_revocable", url.Values{})
+	if err != nil {
+		return nil, err
+	}
+	var resp RevocableOrderResponse
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, fmt.Errorf("解析可撤单响应失败: %w", err)
+	}
+	return &resp, nil
+}
+
 // QueryTrades 查询当日成交。
 func (c *Client) QueryTrades() (*TradesResponse, error) {
 	body := url.Values{"qqhs": {"100"}, "dwc": {""}}

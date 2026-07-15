@@ -21,8 +21,12 @@ type CreateOrderRequest struct {
 }
 
 // CancelOrderRequest 撤单请求参数。
+// 对应东方财富 /Trade/cancelStockWEB 接口的四个表单字段。
 type CancelOrderRequest struct {
-	Revokes string `json:"revokes"` // 订单标识，格式: "20240520_130662"
+	OrderDate string `json:"wtrq"`   // 委托日期，格式 "20260714"
+	OrderID   string `json:"wtbh"`   // 委托编号
+	Market    string `json:"market"` // 市场，如 SA/HA/BJ
+	TradeFlag string `json:"mmlb"`   // 买卖类别/标志，如 0B=买入、0S=卖出
 }
 
 // HistoryQueryParams 历史查询通用参数。
@@ -106,6 +110,32 @@ type OrderRecord struct {
 	OrderStatus string `json:"Wtzt"` // 委托状态
 }
 
+// RevocableOrderResponse 可撤单委托查询响应。
+type RevocableOrderResponse struct {
+	BaseResponse
+	Data []RevocableOrder `json:"Data"`
+}
+
+// RevocableOrder 可撤单委托记录。
+// 字段命名来自网页端 Revoke.js 对 queryRevocableWEBV1 响应的解析。
+// Market 与 Mmbz 为撤单接口所需参数（对应请求字段 market 与 mmlb）。
+type RevocableOrder struct {
+	OrderDate   string `json:"Wtrq"`   // 委托日期
+	OrderID     string `json:"Wtbh"`   // 委托编号
+	OrderTime   string `json:"Wtsj"`   // 委托时间
+	StockCode   string `json:"Zqdm"`   // 证券代码
+	StockName   string `json:"Zqmc"`   // 证券名称
+	TradeDesc   string `json:"Mmsm"`   // 委托方向
+	OrderAmount string `json:"Wtsl"`   // 委托数量
+	OrderStatus string `json:"Wtzt"`   // 委托状态
+	OrderPrice  string `json:"Wtjg"`   // 委托价格
+	DealAmount  string `json:"Cjsl"`   // 成交数量
+	DealValue   string `json:"Cjje"`   // 成交金额
+	DealPrice   string `json:"Cjjg"`   // 成交价格
+	Market      string `json:"Market"` // 市场（撤单参数 market）
+	TradeFlag   string `json:"Mmbz"`   // 买卖标志（撤单参数 mmlb）
+}
+
 // TradesResponse 成交查询响应。
 type TradesResponse struct {
 	BaseResponse
@@ -143,6 +173,12 @@ type CreateOrderResponse struct {
 	BaseResponse
 	Count int               `json:"Count"` // 返回条数
 	Data  []CreateOrderData `json:"Data"`  // 下单结果
+}
+
+// CancelOrderResponse 撤单响应。
+// 撤单接口无业务数据，仅返回公共状态字段。
+type CancelOrderResponse struct {
+	BaseResponse
 }
 
 // CreateOrderData 下单返回数据项。

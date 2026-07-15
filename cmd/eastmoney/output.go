@@ -13,6 +13,10 @@ import (
 const (
 	formatJSON  = "json"
 	formatHuman = "human"
+
+	// human 模式下无数据/空指针占位文案（与中文 CLI 输出风格一致）
+	humanEmpty = "（无数据）"
+	humanNil   = "（空）"
 )
 
 // printOutput 输出数据到 stdout，根据 --format flag 选择 JSON 或可读格式。
@@ -47,7 +51,7 @@ func fprintHuman(w io.Writer, data any) {
 	// 处理指针
 	if v.Kind() == reflect.Pointer {
 		if v.IsNil() {
-			fmt.Fprintln(w, "(nil)")
+			fmt.Fprintln(w, humanNil)
 			return
 		}
 		v = v.Elem()
@@ -95,7 +99,7 @@ func tryUnwrapResponse(v reflect.Value) (any, bool) {
 
 	// 成功：提取 Data
 	if dataField.IsNil() {
-		return "(empty)", true
+		return humanEmpty, true
 	}
 	return dataField.Elem().Interface(), true
 }
@@ -103,7 +107,7 @@ func tryUnwrapResponse(v reflect.Value) (any, bool) {
 // printMap 将 map 打印为 key-value 格式。
 func printMap(w io.Writer, v reflect.Value) {
 	if v.Len() == 0 {
-		fmt.Fprintln(w, "(empty)")
+		fmt.Fprintln(w, humanEmpty)
 		return
 	}
 
@@ -175,14 +179,14 @@ func isStructPtr(v reflect.Value) bool {
 // printTable 将结构体切片打印为对齐表格（支持 CJK 字符宽度）。
 func printTable(w io.Writer, v reflect.Value) {
 	if v.Len() == 0 {
-		fmt.Fprintln(w, "(empty)")
+		fmt.Fprintln(w, humanEmpty)
 		return
 	}
 
 	first := v.Index(0)
 	if first.Kind() == reflect.Pointer {
 		if first.IsNil() {
-			fmt.Fprintln(w, "(empty)")
+			fmt.Fprintln(w, humanEmpty)
 			return
 		}
 		first = first.Elem()

@@ -156,6 +156,14 @@ var queryHandlers = map[string]queryHandler{
 		views := client.ConvertSlice(resp.Data, func(r client.OrderRecord) client.OrderView { return *r.ToView() })
 		return client.WrapResponse(resp.Status, resp.Message, resp.Errcode, &views), nil
 	},
+	"revocable": func(c *client.Client) (any, error) {
+		resp, err := c.QueryRevocableOrders()
+		if err != nil {
+			return nil, err
+		}
+		views := client.ConvertSlice(resp.Data, func(r client.RevocableOrder) client.RevocableOrderView { return *r.ToView() })
+		return client.WrapResponse(resp.Status, resp.Message, resp.Errcode, &views), nil
+	},
 	"trade": func(c *client.Client) (any, error) {
 		resp, err := c.QueryTrades()
 		if err != nil {
@@ -203,7 +211,7 @@ var queryHandlers = map[string]queryHandler{
 }
 
 var queryCmd = &cobra.Command{
-	Use:   "query [asset|operate-amount|order|trade|history-order|history-trade|funds]",
+	Use:   "query [asset|operate-amount|order|revocable|trade|history-order|history-trade|funds]",
 	Short: "查询账户信息",
 	Long: `查询账户资产、可操作数量、委托、成交或资金流水。
 
@@ -211,6 +219,7 @@ var queryCmd = &cobra.Command{
   asset          查询资产与持仓
   operate-amount 查询可操作数量（格式: CODE 或 CODE-PRICE，逆回购价格可选默认1）
   order          查询当日委托
+  revocable      查询当日可撤单委托
   trade          查询当日成交
   history-order  查询历史委托（需 --start 和 --end）
   history-trade  查询历史成交（需 --start 和 --end）
@@ -220,7 +229,7 @@ var queryCmd = &cobra.Command{
 		subcmd := args[0]
 		handler, ok := queryHandlers[subcmd]
 		if !ok {
-			return fmt.Errorf("未知查询类型: %s (可选: asset, operate-amount, order, trade, history-order, history-trade, funds)", subcmd)
+			return fmt.Errorf("未知查询类型: %s (可选: asset, operate-amount, order, revocable, trade, history-order, history-trade, funds)", subcmd)
 		}
 
 		if err := validateDateRange(subcmd); err != nil {
@@ -258,10 +267,13 @@ var queryCmd = &cobra.Command{
 var cancelCmd = &cobra.Command{
 	Use:   "cancel ORDER_ID",
 	Short: "撤销委托",
-	Long: `撤销未成交的委托订单。格式: 委托日期_委托编号
+	Long: `撤销未成交的委托订单。格式: 委托日期_委托编号 或 委托编号
+
+自动查询当日可撤单委托以补全撤单所需的市场与买卖标志参数。
 
 示例:
-  eastmoney cancel 20240520_130662`,
+  eastmoney cancel 20260714_1771064   # 精确撤销指定委托
+  eastmoney cancel 1771064            # 按委托编号撤销`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c, err := createClient(false)
@@ -269,12 +281,18 @@ var cancelCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := c.CancelOrder(args[0])
+		resp, err := c.CancelOrderByID(args[0])
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(result)
+		if resp.Status == 0 {
+			printOutput(client.WrapResponse(0, "撤单委托已提交，可至当日委托查看结果", 0, &map[string]string{
+				"委托标识": args[0],
+			}))
+			return nil
+		}
+		printOutput(client.WrapResponse[any](resp.Status, resp.Message, resp.Errcode, nil))
 		return nil
 	},
 }
