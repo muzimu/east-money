@@ -2,8 +2,6 @@ module github.com/muzimu/east-money
 
 go 1.26.5
 
-replace github.com/getcharzp/go-ocr => github.com/muzimu/go-ocr v0.0.0-20260701063513-2aaa36d7f4d5
-
 require (
 	github.com/getcharzp/go-ocr v0.0.0-20260126073315-15e83dd6ccce
 	github.com/rs/zerolog v1.35.1

@@ -3,6 +3,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/ebitengine/purego v0.9.0 h1:mh0zpKBIXDceC63hpvPuGLiJ8ZAa3DfrFTudmfi8A4k=
 github.com/ebitengine/purego v0.9.0/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
+github.com/getcharzp/go-ocr v0.0.0-20260126073315-15e83dd6ccce h1:m/BT4Fk9h2aum7JJ3JewqyRrDySUQ/xGhH05mfJfLrQ=
+github.com/getcharzp/go-ocr v0.0.0-20260126073315-15e83dd6ccce/go.mod h1:2MBjAl0RZOpexoNRywB+yjpXd018HH3AVlV3EZBpTAE=
 github.com/getcharzp/onnxruntime_purego v0.0.0-20260118041137-401482b32507 h1:d+3aUbLHK9Nfaex6GLlIhb0R7wLHV7LkiUiy0qwU54g=
 github.com/getcharzp/onnxruntime_purego v0.0.0-20260118041137-401482b32507/go.mod h1:JxWrTrdNfR1D0HBxOQixFeC1vkLoz8HPxfBwJ2gF/rw=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
@@ -11,8 +13,6 @@ github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHP
 github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
-github.com/muzimu/go-ocr v0.0.0-20260701063513-2aaa36d7f4d5 h1:jKtfs48A5dFIqCVEiJX70/d4t+sDlUdG43PogTxT+KI=
-github.com/muzimu/go-ocr v0.0.0-20260701063513-2aaa36d7f4d5/go.mod h1:2MBjAl0RZOpexoNRywB+yjpXd018HH3AVlV3EZBpTAE=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rs/zerolog v1.35.1 h1:m7xQeoiLIiV0BCEY4Hs+j2NG4Gp2o2KPKmhnnLiazKI=
