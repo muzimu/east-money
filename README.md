@@ -2,7 +2,7 @@
 
 东方财富自动交易接口 Go 语言实现，基于 [emtl](https://github.com/riiy/emtl) 的 Golang 版本实现与优化。
 
-[![Go Version](https://img.shields.io/badge/Go-1.26.5-blue)](https://go.dev/)
+[![Go Version](https://img.shields.io/badge/Go-1.27.3-blue)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
 ## 特性
@@ -24,7 +24,7 @@
 
 | 依赖 | 说明 | 安装方式 |
 | ---- | ---- | -------- |
-| Go | 1.26.5 | [go.dev/dl](https://go.dev/dl/) |
+| Go | 1.27.3 | [go.dev/dl](https://go.dev/dl/) |
 | OCR | 本地 ONNX 或远程 HTTP 二选一 | 见下方 |
 
 ### 安装及构建
