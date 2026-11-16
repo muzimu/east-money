@@ -1,6 +1,6 @@
 module github.com/muzimu/east-money
 
-go 1.27.3
+go 1.27.4
 
 require (
 	github.com/getcharzp/go-ocr v0.0.0-20260126073315-15e83dd6ccce
